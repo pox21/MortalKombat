@@ -1,9 +1,11 @@
 const arenas = document.querySelector('.arenas');
+const randomBtn = document.querySelector('.button');
 
 const scorpion = {
+  player: 1,
   name: 'SCORPION',
-  hp: 80,
-  img: 'assets/pers/scorpion.gif',
+  hp: 100,
+  img: 'assets/pers/scorpion/scorpion.gif',
   weapon: ['qwe', 'ewq'],
   attack() {
     console.log(scorpion.name + ' Fight...');
@@ -11,46 +13,77 @@ const scorpion = {
 };
 
 const subZero = {
+  player: 2,
   name: 'SUB-ZERO',
-  hp: 90,
-  img: 'assets/pers/subzero.gif',
+  hp: 100,
+  img: 'assets/pers/sub-zero/subzero.gif',
   weapon: ['qwe', 'ewq'],
   attack() {
     console.log(subZero.name + ' Fight...');
   }
 };
 
-function createPlayer(playerClass, pers) {
+function createEl(tag, className) {
+  const el = document.createElement(tag);
 
-  function createEl(className) {
-    const el = document.createElement('div');
+  if(className) {
     el.classList.add(className);
-
-    return el;
   }
 
-  const player = createEl(playerClass);
-  const progressbar = createEl('progressbar');
-  const character = createEl('character');
-  const life = createEl('life');
-  const name = createEl('name');
-  // const player = document.createElement('div');
-  // player.classList.add(playerClass);
+  return el;
+};
 
-  // const progressbar = document.createElement('div');
-  // progressbar.classList.add('progressbar');
+function playerWins(name, draw) {
+  const winsTitle = createEl('div', 'loseTitle');
+  winsTitle.innerText = name + ' Wins';
+  if (draw) {
+    winsTitle.innerText = draw;
+  }
+  return winsTitle;
+};
 
-  // const character = document.createElement('div');
-  // character.classList.add('character');
-  const img = document.createElement('img');
+function changeHp(player) {
+  const playerLife = document.querySelector('.player'+ player.player +' .life')
+  player.hp -= Math.ceil(Math.random() * 20);
+  playerLife.style.width = player.hp + '%';
+
+  if (player.hp <= 0) {
+    player.hp = 0;
+    playerLife.style.width = player.hp + '%';
+  }
+  return player.hp
+};
+
+randomBtn.addEventListener('click', () => {
+  const sbz = changeHp(subZero);
+  const scp = changeHp(scorpion);
+
+  if (sbz === 0 || scp === 0) {
+    randomBtn.disabled = true;
+    
+    if (sbz === 0 && scp === 0) {
+      arenas.appendChild(playerWins(subZero.name, 'Draw'));
+    } 
+    if (sbz > scp) {
+      arenas.appendChild(playerWins(subZero.name));
+    } 
+    if (sbz < scp) {
+      arenas.appendChild(playerWins(scorpion.name));
+    } 
+  }
+
+});
+
+function createPlayer(pers) {
+
+  const player = createEl('div', 'player' + pers.player);
+  const progressbar = createEl('div', 'progressbar');
+  const character = createEl('div', 'character');
+  const life = createEl('div', 'life');
+  const name = createEl('div', 'name');
+  const img = createEl('img');
   img.src = pers.img;
-
-  // const life = document.createElement('div');
-  // life.classList.add('life');
   life.style.width = pers.hp + "%";
-
-  // const name = document.createElement('div');
-  // name.classList.add('name');
   name.innerText = pers.name;
   
   character.appendChild(img);
@@ -59,9 +92,9 @@ function createPlayer(playerClass, pers) {
   player.appendChild(progressbar);
   player.appendChild(character);
   
-  arenas.appendChild(player);
+  return player;
 }
 
-createPlayer('player1', scorpion);
-createPlayer('player2', subZero);
+ arenas.appendChild(createPlayer(scorpion));
+ arenas.appendChild(createPlayer(subZero));
 

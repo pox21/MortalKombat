@@ -35,9 +35,11 @@ function createEl(tag, className) {
 
 function playerWins(name, draw) {
   const winsTitle = createEl('div', 'loseTitle');
-  winsTitle.innerText = name + ' Wins';
+  
   if (draw) {
     winsTitle.innerText = draw;
+  } else {
+    winsTitle.innerText = name + ' Wins';
   }
   return winsTitle;
 };

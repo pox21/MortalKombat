@@ -8,8 +8,11 @@ const scorpion = {
   img: 'assets/pers/scorpion/scorpion.gif',
   weapon: ['qwe', 'ewq'],
   attack() {
-    console.log(scorpion.name + ' Fight...');
-  }
+    console.log(this.name + ' Fight...');
+  },
+  elHP: elHP,
+  renderHP: renderHP,
+  changeHp: changeHp,
 };
 
 const subZero = {
@@ -19,8 +22,11 @@ const subZero = {
   img: 'assets/pers/sub-zero/subzero.gif',
   weapon: ['qwe', 'ewq'],
   attack() {
-    console.log(subZero.name + ' Fight...');
-  }
+    console.log(this.name + ' Fight...');
+  },
+  elHP: elHP,
+  renderHP: renderHP,
+  changeHp: changeHp,
 };
 
 function createEl(tag, className) {
@@ -33,48 +39,68 @@ function createEl(tag, className) {
   return el;
 };
 
-function playerWins(name, draw) {
+function playerWins(name) {
   const winsTitle = createEl('div', 'loseTitle');
   
-  if (draw) {
-    winsTitle.innerText = draw;
-  } else {
+  if (name) {
     winsTitle.innerText = name + ' Wins';
+  } else {
+    winsTitle.innerText = 'Draw!';
   }
   return winsTitle;
 };
 
-function changeHp(player) {
-  const playerLife = document.querySelector('.player'+ player.player +' .life')
-  player.hp -= Math.ceil(Math.random() * 20);
-  playerLife.style.width = player.hp + '%';
+function getRandom(num) {
+  return Math.ceil(Math.random() * num);
+}
 
-  if (player.hp <= 0) {
-    player.hp = 0;
-    playerLife.style.width = player.hp + '%';
+function elHP() {
+  return document.querySelector('.player'+ this.player +' .life')
+}
+
+function renderHP() {
+  this.elHP().style.width = this.hp + '%';
+}
+
+function changeHp(num) {
+  this.hp -= num;
+  if (this.hp <= 0) {
+    this.hp = 0;
   }
-  return player.hp
 };
 
-randomBtn.addEventListener('click', () => {
-  const sbz = changeHp(subZero);
-  const scp = changeHp(scorpion);
+function createReloadButton() {
+  const reloadBtn = createEl('button', 'button');
+  const div = createEl('div', 'reloadWrap');
+  reloadBtn.innerText = 'Restart';
+  div.appendChild(reloadBtn);
+  return div
+}
 
-  if (sbz === 0 || scp === 0) {
+randomBtn.addEventListener('click', () => {
+  subZero.changeHp(getRandom(20));
+  subZero.renderHP();
+  scorpion.changeHp(getRandom(20));
+  scorpion.renderHP();
+
+  if (subZero.hp === 0 || scorpion.hp === 0) {
     randomBtn.disabled = true;
+    arenas.appendChild(createReloadButton());
     
-    if (sbz === 0 && scp === 0) {
-      arenas.appendChild(playerWins(subZero.name, 'Draw'));
-    } 
-    if (sbz > scp) {
-      arenas.appendChild(playerWins(subZero.name));
-    } 
-    if (sbz < scp) {
-      arenas.appendChild(playerWins(scorpion.name));
-    } 
+    document.querySelector('.reloadWrap .button').addEventListener('click', function() {
+      window.location.reload()
+    });
   }
 
+  if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+    arenas.appendChild(playerWins(scorpion.name));
+  } else if (scorpion.hp === 0 && scorpion.hp < subZero.hp) {
+    arenas.appendChild(playerWins(subZero.name));
+  } else if (subZero.hp === 0 && subZero.hp === 0) {
+    arenas.appendChild(playerWins());
+  }
 });
+
 
 function createPlayer(pers) {
 

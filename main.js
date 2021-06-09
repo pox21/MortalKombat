@@ -15,10 +15,10 @@ const scorpion = {
   hp: 100,
   img: 'assets/pers/scorpion/scorpion.gif',
   weapon: ['qwe', 'ewq'],
-  attack,
   elHP, 
   renderHP,
   changeHp,
+  attack,
 };
 
 const subZero = {
@@ -33,8 +33,12 @@ const subZero = {
   changeHp,
 };
 
-function attack() {
-  console.log(this.name + ' Fight...');
+function attack(item) {
+  return {
+    value: getRandom(HIT[item.value]),
+    hit: item.value
+  }
+  
 };
 
 function createEl(tag, className) {
@@ -74,6 +78,17 @@ function changeHp(num) {
   this.hp -= num;
   if (this.hp <= 0) {
     this.hp = 0;
+  }
+};
+
+function defenceRender(defValue, enemyAttackVal, attackVal) {
+  if (defValue === enemyAttackVal) {
+    if (attackVal - HIT[defValue] <= 0) {
+      attackVal = 0;
+    }
+    return attackVal
+  } else {
+    return attackVal
   }
 };
 
@@ -150,24 +165,22 @@ formFight.addEventListener('submit', function(e) {
   e.preventDefault();
 
   const enemy = enemyAttack();
-  const attack = {};
+  let attack = {};
 
   for(let item of formFight) {
     if (item.checked && item.name === 'hit') {
-      attack.value = getRandom(HIT[item.value]);
-      attack.hit = item.value;
+      attack.value = scorpion.attack(item).value;
+      attack.hit = scorpion.attack(item).hit;
     }
     if (item.checked && item.name === 'defence') {
-      attack.defence = item.value;
-      console.log(item.value)
+      attack.defence = item.value; 
     }
-
     item.checked = false;
-  }
+  };
 
-  subZero.changeHp(enemy.value);
+  subZero.changeHp(defenceRender(enemy.defence, attack.hit, attack.value));
   subZero.renderHP();
-  scorpion.changeHp(attack.value);
+  scorpion.changeHp(defenceRender(attack.defence, enemy.hit, enemy.value));
   scorpion.renderHP();
 
   if (subZero.hp === 0 || scorpion.hp === 0) {

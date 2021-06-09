@@ -1,5 +1,13 @@
 const arenas = document.querySelector('.arenas');
-const randomBtn = document.querySelector('.button');
+// const randomBtn = document.querySelector('.button');
+const formFight = document.querySelector('.control');
+
+const HIT = {
+    head: 30,
+    body: 25,
+    foot: 20,
+}
+const ATTACK = ['head', 'body', 'foot'];
 
 const scorpion = {
   player: 1,
@@ -7,12 +15,10 @@ const scorpion = {
   hp: 100,
   img: 'assets/pers/scorpion/scorpion.gif',
   weapon: ['qwe', 'ewq'],
-  attack() {
-    console.log(this.name + ' Fight...');
-  },
-  elHP: elHP,
-  renderHP: renderHP,
-  changeHp: changeHp,
+  attack,
+  elHP, 
+  renderHP,
+  changeHp,
 };
 
 const subZero = {
@@ -21,12 +27,14 @@ const subZero = {
   hp: 100,
   img: 'assets/pers/sub-zero/subzero.gif',
   weapon: ['qwe', 'ewq'],
-  attack() {
-    console.log(this.name + ' Fight...');
-  },
-  elHP: elHP,
-  renderHP: renderHP,
-  changeHp: changeHp,
+  attack,
+  elHP,
+  renderHP,
+  changeHp,
+};
+
+function attack() {
+  console.log(this.name + ' Fight...');
 };
 
 function createEl(tag, className) {
@@ -71,35 +79,36 @@ function changeHp(num) {
 
 function createReloadButton() {
   const reloadBtn = createEl('button', 'button');
-  const div = createEl('div', 'reloadWrap');
+  const reloadDiv = createEl('div', 'reloadWrap');
   reloadBtn.innerText = 'Restart';
-  div.appendChild(reloadBtn);
-  return div
+  reloadDiv.appendChild(reloadBtn);
+
+  reloadBtn.addEventListener('click', function() {
+      window.location.reload();
+    });
+
+  arenas.appendChild(reloadDiv);
 }
 
-randomBtn.addEventListener('click', () => {
-  subZero.changeHp(getRandom(20));
-  subZero.renderHP();
-  scorpion.changeHp(getRandom(20));
-  scorpion.renderHP();
+// randomBtn.addEventListener('click', () => {
+//   subZero.changeHp(getRandom(20));
+//   subZero.renderHP();
+//   scorpion.changeHp(getRandom(20));
+//   scorpion.renderHP();
 
-  if (subZero.hp === 0 || scorpion.hp === 0) {
-    randomBtn.disabled = true;
-    arenas.appendChild(createReloadButton());
-    
-    document.querySelector('.reloadWrap .button').addEventListener('click', function() {
-      window.location.reload()
-    });
-  }
+//   if (subZero.hp === 0 || scorpion.hp === 0) {
+//     randomBtn.disabled = true;
+//     createReloadButton();
+//   }
 
-  if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
-    arenas.appendChild(playerWins(scorpion.name));
-  } else if (scorpion.hp === 0 && scorpion.hp < subZero.hp) {
-    arenas.appendChild(playerWins(subZero.name));
-  } else if (subZero.hp === 0 && subZero.hp === 0) {
-    arenas.appendChild(playerWins());
-  }
-});
+//   if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+//     arenas.appendChild(playerWins(scorpion.name));
+//   } else if (scorpion.hp === 0 && scorpion.hp < subZero.hp) {
+//     arenas.appendChild(playerWins(subZero.name));
+//   } else if (subZero.hp === 0 && subZero.hp === 0) {
+//     arenas.appendChild(playerWins());
+//   }
+// });
 
 
 function createPlayer(pers) {
@@ -123,6 +132,54 @@ function createPlayer(pers) {
   return player;
 }
 
- arenas.appendChild(createPlayer(scorpion));
- arenas.appendChild(createPlayer(subZero));
+arenas.appendChild(createPlayer(scorpion));
+arenas.appendChild(createPlayer(subZero));
 
+function enemyAttack() {
+  const hit = ATTACK[getRandom(3) - 1];
+  const defence = ATTACK[getRandom(3) - 1];
+
+  return {
+    value: getRandom(HIT[hit]),
+    hit,
+    defence,
+  }
+}
+
+formFight.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const enemy = enemyAttack();
+  const attack = {};
+
+  for(let item of formFight) {
+    if (item.checked && item.name === 'hit') {
+      attack.value = getRandom(HIT[item.value]);
+      attack.hit = item.value;
+    }
+    if (item.checked && item.name === 'defence') {
+      attack.defence = item.value;
+      console.log(item.value)
+    }
+
+    item.checked = false;
+  }
+
+  subZero.changeHp(enemy.value);
+  subZero.renderHP();
+  scorpion.changeHp(attack.value);
+  scorpion.renderHP();
+
+  if (subZero.hp === 0 || scorpion.hp === 0) {
+    createReloadButton();
+  }
+
+  if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+    arenas.appendChild(playerWins(scorpion.name));
+  } else if (scorpion.hp === 0 && scorpion.hp < subZero.hp) {
+    arenas.appendChild(playerWins(subZero.name));
+  } else if (subZero.hp === 0 && subZero.hp === 0) {
+    arenas.appendChild(playerWins());
+  }
+
+});

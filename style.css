@@ -378,7 +378,7 @@ form:invalid button[class=button]:active::after {
     width: 80px;
     height: 50px;
     content: "";
-    transform: scaleY(1.2);
+    transform: scaleY(0);
     z-index: -1;
     margin-bottom: -50px;
     transition: 0.3s;
@@ -398,6 +398,7 @@ input[type=radio]:checked + label > span {
 input[type=radio]:checked + label > span::before {
     background: #f5d100;
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.2);
+    transform: scaleY(1);
 }
 input[type=radio]:checked + label > span:hover {
     background: none;

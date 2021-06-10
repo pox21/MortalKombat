@@ -83,10 +83,10 @@ function changeHp(num) {
 
 function defenceRender(defValue, enemyAttackVal, attackVal) {
   if (defValue === enemyAttackVal) {
-    if (attackVal - HIT[defValue] <= 0) {
-      attackVal = 0;
-    }
-    return attackVal
+    //if (attackVal - HIT[defValue] <= 0) {
+    //  attackVal = 0;
+    //}
+    return attackVal = 0
   } else {
     return attackVal
   }

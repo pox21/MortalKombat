@@ -95,7 +95,7 @@ function playerWins(name) {
   const winsTitle = createEl('div', 'loseTitle');
   
   if (name) {
-    winsTitle.innerText = name + ' Wins';
+    winsTitle.innerText = `${name} Wins`;
   } else {
     winsTitle.innerText = 'Draw!';
   }
@@ -111,7 +111,7 @@ function elHP() {
 };
 
 function renderHP() {
-  this.elHP().style.width = this.hp + '%';
+  this.elHP().style.width = `${this.hp}%`;
 };
 
 function changeHp(num) {
@@ -137,14 +137,14 @@ function createReloadButton() {
 
 function createPlayer(pers) {
 
-  const player = createEl('div', 'player' + pers.player);
+  const player = createEl('div', `player${pers.player}`);
   const progressbar = createEl('div', 'progressbar');
   const character = createEl('div', 'character');
   const life = createEl('div', 'life');
   const name = createEl('div', 'name');
   const img = createEl('img');
   img.src = pers.img;
-  life.style.width = pers.hp + "%";
+  life.style.width = `${pers.hp}%`;
   name.innerText = pers.name;
   
   character.appendChild(img);
@@ -197,17 +197,65 @@ function showResult() {
 
   if (player2.hp === 0 && player2.hp < player1.hp) {
     arenas.appendChild(playerWins(player1.name));
+    endGame(player1.name, player2.name);
   } else if (player1.hp === 0 && player1.hp < player2.hp) {
     arenas.appendChild(playerWins(player2.name));
+    endGame(player2.name, player1.name);
   } else if (player2.hp === 0 && player2.hp === 0) {
     arenas.appendChild(playerWins());
+    endGame();
   }
 };
 
-function generateLogs(type, player1, player2) {
+function timeGenerate() {
+  const data = new Date();
+  // let hours = data.getHours();
+  // let mins = data.getMinutes();
+  // let sec = data.getSeconds();
+  // if (mins < 10) {
+  //   mins = `0${mins}`;
+  // }
+  // if (sec < 10) {
+  //   sec = `0${sec} `${hours}:${mins}:${sec}``;
+  //}
+  const time = data.toLocaleTimeString();
+
+  return time;
+}
+
+function startGame(player1, player2) {
+  const text = logs.start.replace('[time]', timeGenerate()).replace('[player1]', player1).replace('[player2]', player2);
+  const el = `<p>${text}</p>`
+  chat.insertAdjacentHTML('afterbegin', el);
+}
+
+function endGame(player1 = '', player2 = '') {
+  let text
+  if (player1 && player2) {
+     text = logs.end[getRandom(logs.end.length)].replace('[playerWins]', player1).replace('[playerLose]', player2);
+  } else {
+    text = `Результат боя: соперники гордо сложили ласты одновременно`;
+  }
+  
+  const el = `<p>${text}</p>`;
+  chat.insertAdjacentHTML('afterbegin', el)
+};
+
+startGame(player1.name, player2.name);
+
+function generateLogs(type, player1, player2, dmg = 0) {
+
   const text = logs[type][getRandom(logs[type].length - 1)].replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name);
 
-  const el = `<p>${text}</p>`;
+  const el = `
+            <p>
+              <span class="chat__text">
+                <span class="chat__time">${timeGenerate()}</span> | 
+                ${text}
+                <span class="${dmg > 0 ? 'damage': 'damage--miss'}">${dmg > 0 ? `-${dmg}` : ''}</span>
+              </span> 
+              <span class="chat__hp">${player2.hp}/100</span>
+            </p>`;
   chat.insertAdjacentHTML('afterbegin', el);
 };
 
@@ -220,7 +268,7 @@ formFight.addEventListener('submit', function(e) {
   if (player.defence !== enemy.hit) {
     player1.changeHp(enemy.value);
     player1.renderHP();
-    generateLogs('hit', player2, player1);
+    generateLogs('hit', player2, player1, enemy.value);
   } else if (player.defence === enemy.hit) {
     generateLogs('defence', player2, player1);
   };
@@ -228,12 +276,11 @@ formFight.addEventListener('submit', function(e) {
   if (enemy.defence !== player.hit) {
     player2.changeHp(player.value);
     player2.renderHP();
-    generateLogs('hit', player1, player2);
+    generateLogs('hit', player1, player2, player.value);
   } else if (enemy.defence === player.hit) {
     generateLogs('defence', player1, player2);
   };
   
   showResult();
   
-
 });

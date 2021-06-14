@@ -35,39 +35,46 @@ body {
     flex-direction: column;
     align-items: center;
     position: relative;
-    background: #424466;
+    background-color: #000;
+    /* background: #424466; */
+}
+
+.container {
+    max-width: 1170px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
 }
 
 .wall-left {
     position: absolute;
-    width: 87px;
+    width: 50px;
     background-image: url(assets/wall-left.png);
     min-height: 100vh;
     background-size: contain;
     background-repeat: repeat-y;
     top: 0;
     z-index: 100;
-    left: 50%;
-    transform: translate(-450px, 0px);
+    left: 0;
+    transform: translate(-20px, 0px);
     height: 100%;
 }
 
 .wall-right {
     position: absolute;
-    width: 87px;
+    width: 50px;
     background-image: url(./assets/wall-right.png);
     min-height: 100vh;
     background-size: contain;
     background-repeat: repeat-y;
     top: 0;
     z-index: 100;
-    right: 50%;
-    transform: translate(450px, 0px);
+    right: 0;
+    transform: translate(20px, 0px);
     height: 100%;
 }
 
 .arenas {
-    width: 786px;
     height: 578px;
     background-size: cover;
     background-position: center;
@@ -77,23 +84,26 @@ body {
 }
 
 .arenas.arena1 {
-    background-image: url(./assets/scorpions-lair-arenas.png);
+    background-image: url('assets/Courtyard_Night.jpeg');
 }
 
 .arenas.arena2 {
-    background-image: url(./assets/the-cave.png);
+    background-image: url('assets/ShangTsungs_Garden_Night.jpeg');
 }
 
 .arenas.arena3 {
-    background-image: url(./assets/jade-s-desert.png);
+    background-image: url('assets/the_Cathedral.jpeg');
 }
 
 .arenas.arena4 {
-    background-image: url(./assets/scislac-busorez.png);
+    background-image: url('assets/thepit_day.jpeg');
 }
 
 .arenas.arena5 {
-    background-image: url(./assets/waterfront.png);
+    background-image: url('assets/goroslair.jpeg');
+}
+.arenas.arena6 {
+    background-image: url('assets/thepit_night.jpeg');
 }
 
 .player1,
@@ -170,7 +180,6 @@ body {
 }
 
 .chat {
-    width: 786px;
     height: 30vh;
     background-image: url(./assets/versus.png);
     background-size: cover;
@@ -217,7 +226,7 @@ body {
 }
 
 .player2 .character img {
-    transform: scaleX(-1) translate(50%, 0);
+    transform: scaleX(-1) translate(100%, 0);
 }
 
 .character img {
@@ -225,8 +234,11 @@ body {
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translate(-50%, 0);
+    transform: translate(0, 0);
+    transition: transform .3s ease;
 }
+
+
 
 .fight {
     position: absolute;
@@ -436,4 +448,73 @@ input[type=radio]:checked + label > span:hover {
 .damage--miss {
     padding-left: 2px;
     color: rgb(74, 195, 74)
+}
+
+@media (max-width: 768px) {
+    
+
+    .character img {
+        transform: translate(-50%, 0);
+    }
+
+    .player2 .character img {
+        transform: scaleX(-1) translate(50%, 0);
+    }
+
+    .progressbar {
+        width: 210px;
+        height: 20px;
+    }
+
+    .name {
+        font-size: 12px;
+        line-height: 1;
+    }
+
+    .control {
+        font-size: 14px;
+    }
+
+    .inputWrap {
+        max-width: 210px;
+        width: 100%;
+    }
+
+    .ul label span {
+        
+        width: 40px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    .ul label span::before {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+    }
+
+    .inputWrap h2 {
+        font-size: 14px;
+    }
+
+    .buttonWrap .button {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+}
+
+@media (max-height: 578px) {
+    .arenas {
+        height: 100vh;
+    }
+}
+
+@media (max-width: 500px) {
+    .container {
+        width: 500px;
+    }
 }

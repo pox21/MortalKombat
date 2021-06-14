@@ -2,6 +2,8 @@ const arenas = document.querySelector('.arenas');
 const formFight = document.querySelector('.control');
 const chat = document.querySelector('.chat');
 
+arenas.classList.add(`arena${getRandom(6)}`);
+
 const HIT = {
     head: 30,
     body: 25,
@@ -49,11 +51,11 @@ const logs = {
   draw: 'Ничья - это тоже победа!'
 };
 
-const player1 = {
-  player: 1,
+const player2 = {
+  player: 2,
   name: 'SCORPION',
   hp: 100,
-  img: 'assets/pers/scorpion/scorpion.gif',
+  img: 'assets/pers/scorpion/scorpion-p.gif',
   weapon: ['qwe', 'ewq'],
   elHP, 
   renderHP,
@@ -61,11 +63,11 @@ const player1 = {
   attack,
 };
 
-const player2 = {
-  player: 2,
+const player1 = {
+  player: 1,
   name: 'SUB-ZERO',
   hp: 100,
-  img: 'assets/pers/sub-zero/subzero.gif',
+  img: 'assets/pers/sub-zero/subzero-project.gif',
   weapon: ['qwe', 'ewq'],
   attack,
   elHP,

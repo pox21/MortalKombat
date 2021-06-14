@@ -54,7 +54,7 @@ const logs = {
 const player2 = {
   player: 2,
   name: 'SCORPION',
-  hp: 1,
+  hp: 100,
   img: 'assets/pers/scorpion/scorpion-p.gif',
   weapon: ['qwe', 'ewq'],
   elHP, 
@@ -66,7 +66,7 @@ const player2 = {
 const player1 = {
   player: 1,
   name: 'SUB-ZERO',
-  hp: 1,
+  hp: 100,
   img: 'assets/pers/sub-zero/subzero-project.gif',
   weapon: ['qwe', 'ewq'],
   attack,

@@ -54,7 +54,7 @@ const logs = {
 const player2 = {
   player: 2,
   name: 'SCORPION',
-  hp: 100,
+  hp: 1,
   img: 'assets/pers/scorpion/scorpion-p.gif',
   weapon: ['qwe', 'ewq'],
   elHP, 
@@ -66,7 +66,7 @@ const player2 = {
 const player1 = {
   player: 1,
   name: 'SUB-ZERO',
-  hp: 100,
+  hp: 1,
   img: 'assets/pers/sub-zero/subzero-project.gif',
   weapon: ['qwe', 'ewq'],
   attack,
@@ -200,11 +200,15 @@ function showResult() {
   if (player2.hp === 0 && player2.hp < player1.hp) {
     arenas.appendChild(playerWins(player1.name));
     endGame(player1.name, player2.name);
+    document.querySelector('.player2 img').src = 'assets/pers/scorpion/scorpion-die.gif';
   } else if (player1.hp === 0 && player1.hp < player2.hp) {
     arenas.appendChild(playerWins(player2.name));
+    document.querySelector('.player1 img').src = 'assets/pers/sub-zero/subzero-die.gif';
     endGame(player2.name, player1.name);
   } else if (player2.hp === 0 && player2.hp === 0) {
     arenas.appendChild(playerWins());
+    document.querySelector('.player2 img').src = 'assets/pers/scorpion/scorpion-die.gif';
+    document.querySelector('.player1 img').src = 'assets/pers/sub-zero/subzero-die.gif';
     endGame();
   }
 };

@@ -2,13 +2,11 @@ const arenas = document.querySelector('.arenas');
 const formFight = document.querySelector('.control');
 const chat = document.querySelector('.chat');
 
-arenas.classList.add(`arena${getRandom(6)}`);
-
 const HIT = {
     head: 30,
     body: 25,
     foot: 20,
-}
+};
 const ATTACK = ['head', 'body', 'foot'];
 
 const logs = {
@@ -48,13 +46,18 @@ const logs = {
       '[playerKick] не думал о бое, потому расстроенный [playerDefence] отпрыгнул от удара кулаком куда обычно не бьют.',
       '[playerKick] обманулся и жестокий [playerDefence] блокировал удар стопой в солнечное сплетение.'
   ],
-  draw: 'Ничья - это тоже победа!'
+  draw: [
+    'Ничья - это тоже победа!',
+    'Оба соперника решили слиться...',
+    'Соперники оказались на столько ловкие, что уложили друг друга! lol)',
+    'Легким движением правой ноги, один из противников уложил другого, после чего лёг рядом'
+  ]
 };
 
 const player2 = {
   player: 2,
   name: 'SCORPION',
-  hp: 1,
+  hp: 10,
   img: 'assets/pers/scorpion/scorpion-p.gif',
   weapon: ['qwe', 'ewq'],
   elHP, 
@@ -66,13 +69,17 @@ const player2 = {
 const player1 = {
   player: 1,
   name: 'SUB-ZERO',
-  hp: 1,
+  hp: 10,
   img: 'assets/pers/sub-zero/subzero-project.gif',
   weapon: ['qwe', 'ewq'],
   attack,
   elHP,
   renderHP,
   changeHp,
+};
+
+const getRandom = (num) => {
+  return Math.ceil(Math.random() * num);
 };
 
 function attack(item) {
@@ -83,7 +90,7 @@ function attack(item) {
   
 };
 
-function createEl(tag, className) {
+const createEl = (tag, className) => {
   const el = document.createElement(tag);
 
   if(className) {
@@ -93,7 +100,7 @@ function createEl(tag, className) {
   return el;
 };
 
-function playerWins(name) {
+const playerWins = (name) => {
   const winsTitle = createEl('div', 'loseTitle');
   
   if (name) {
@@ -102,10 +109,6 @@ function playerWins(name) {
     winsTitle.innerText = 'Draw!';
   }
   return winsTitle;
-};
-
-function getRandom(num) {
-  return Math.ceil(Math.random() * num);
 };
 
 function elHP() {
@@ -123,7 +126,7 @@ function changeHp(num) {
   }
 };
 
-function createReloadButton() {
+const createReloadButton = () => {
   const reloadBtn = createEl('button', 'button');
   const reloadDiv = createEl('div', 'reloadWrap');
   reloadBtn.innerText = 'Restart';
@@ -137,7 +140,7 @@ function createReloadButton() {
 };
 
 
-function createPlayer(pers) {
+const createPlayer = (pers) => {
 
   const player = createEl('div', `player${pers.player}`);
   const progressbar = createEl('div', 'progressbar');
@@ -161,7 +164,9 @@ function createPlayer(pers) {
 arenas.appendChild(createPlayer(player1));
 arenas.appendChild(createPlayer(player2));
 
-function enemyAttack() {
+arenas.classList.add(`arena${getRandom(6)}`);
+
+const enemyAttack = () => {
   const hit = ATTACK[getRandom(3) - 1];
   const defence = ATTACK[getRandom(3) - 1];
 
@@ -172,7 +177,7 @@ function enemyAttack() {
   }
 };
 
-function playerAttack() {
+const playerAttack = () => {
   const attack = {};
 
   for(let item of formFight) {
@@ -189,7 +194,51 @@ function playerAttack() {
   return attack
 };
 
-function showResult() {
+const timeGenerate = () => {
+  const data = new Date();
+  const time = data.toLocaleTimeString();
+
+  return time;
+}
+
+const generateLogs = (type = '', player1 = {}, player2 = {}, dmg = 0) => {
+  let txt = '';
+  switch(type) {
+    case 'hit':
+      text = logs[type][getRandom(logs[type].length - 1)].replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name);
+      break;
+    case 'defence':
+      text = logs[type][getRandom(logs[type].length - 1)].replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name);
+      break;
+    case 'start':
+      text = logs[type].replace('[time]', timeGenerate()).replace('[player1]', player1.name).replace('[player2]', player2.name);
+      break;
+    case 'end':
+      text = logs[type][getRandom(logs[type].length -1)].replace('[playerWins]', player1.name).replace('[playerLose]', player2.name);
+      break;
+    case 'draw':
+      text = logs[type][getRandom(logs[type].length -1)];
+      break;
+    default:
+      text = 'Кажется что то пошло не так...';
+  };
+
+  const el = `
+            <p>
+              <span class="chat__text">
+                <span class="chat__time">${timeGenerate()}</span> | 
+                ${text}
+                <span class="${dmg > 0 ? 'damage': 'damage--miss'}">${dmg > 0 ? `-${dmg}` : ''}</span>
+              </span> 
+              ${dmg ? `<span class="chat__hp">${player2.hp}/100</span>` : ''}
+            </p>`;
+  chat.insertAdjacentHTML('afterbegin', el);
+
+};
+
+generateLogs('start', player1, player2);
+
+const showResult = () => {
   if (player2.hp === 0 || player1.hp === 0) {
     createReloadButton();
     for(let item of formFight) {
@@ -199,70 +248,18 @@ function showResult() {
 
   if (player2.hp === 0 && player2.hp < player1.hp) {
     arenas.appendChild(playerWins(player1.name));
-    endGame(player1.name, player2.name);
+    generateLogs('end', player1, player2);
     document.querySelector('.player2 img').src = 'assets/pers/scorpion/scorpion-die.gif';
   } else if (player1.hp === 0 && player1.hp < player2.hp) {
     arenas.appendChild(playerWins(player2.name));
     document.querySelector('.player1 img').src = 'assets/pers/sub-zero/subzero-die.gif';
-    endGame(player2.name, player1.name);
+    generateLogs('end', player2, player1);
   } else if (player2.hp === 0 && player2.hp === 0) {
     arenas.appendChild(playerWins());
     document.querySelector('.player2 img').src = 'assets/pers/scorpion/scorpion-die.gif';
     document.querySelector('.player1 img').src = 'assets/pers/sub-zero/subzero-die.gif';
-    endGame();
+    generateLogs('draw');
   }
-};
-
-function timeGenerate() {
-  const data = new Date();
-  // let hours = data.getHours();
-  // let mins = data.getMinutes();
-  // let sec = data.getSeconds();
-  // if (mins < 10) {
-  //   mins = `0${mins}`;
-  // }
-  // if (sec < 10) {
-  //   sec = `0${sec} `${hours}:${mins}:${sec}``;
-  //}
-  const time = data.toLocaleTimeString();
-
-  return time;
-}
-
-function startGame(player1, player2) {
-  const text = logs.start.replace('[time]', timeGenerate()).replace('[player1]', player1).replace('[player2]', player2);
-  const el = `<p>${text}</p>`
-  chat.insertAdjacentHTML('afterbegin', el);
-}
-
-function endGame(player1 = '', player2 = '') {
-  let text
-  if (player1 && player2) {
-     text = logs.end[getRandom(logs.end.length)].replace('[playerWins]', player1).replace('[playerLose]', player2);
-  } else {
-    text = `Результат боя: соперники гордо сложили ласты одновременно`;
-  }
-  
-  const el = `<p>${text}</p>`;
-  chat.insertAdjacentHTML('afterbegin', el)
-};
-
-startGame(player1.name, player2.name);
-
-function generateLogs(type, player1, player2, dmg = 0) {
-
-  const text = logs[type][getRandom(logs[type].length - 1)].replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name);
-
-  const el = `
-            <p>
-              <span class="chat__text">
-                <span class="chat__time">${timeGenerate()}</span> | 
-                ${text}
-                <span class="${dmg > 0 ? 'damage': 'damage--miss'}">${dmg > 0 ? `-${dmg}` : ''}</span>
-              </span> 
-              <span class="chat__hp">${player2.hp}/100</span>
-            </p>`;
-  chat.insertAdjacentHTML('afterbegin', el);
 };
 
 formFight.addEventListener('submit', function(e) {
